@@ -24,6 +24,10 @@ bool list_dir(char *path)
 		return false;
 
 	while ((entry = readdir(dir)) != NULL) {
+
+		if (!(opt & F_HIDDEN) && entry->d_name[0] == '.')
+			continue;
+
 		printf("%s\n", entry->d_name);
 	}
 
@@ -41,7 +45,9 @@ bool parse_flags(int argc, char **argv)
 			case	'R': opt |= F_RECURSIVE; break;
 			case	't': opt |= F_SORTED; break;
 			case	'r': opt |= F_REVERSE; break;
-			default: printf("Error: unknown option: %s\n", argv[i]); return false;
+			default:
+				     printf("Error: unknown option: %s\n", argv[i]);
+				     return false;
 		}
 	}
 	if (i < argc)
@@ -51,6 +57,7 @@ bool parse_flags(int argc, char **argv)
 	if (opt & F_RECURSIVE) printf("[opt]: F_RECURSIVE\n");
 	if (opt & F_SORTED) printf("[opt]: F_SORTED\n");
 	if (opt & F_REVERSE) printf("[opt]: F_REVERSE\n");
+	printf("------------------------------------\n");
 
 	return true;
 }
