@@ -46,32 +46,39 @@ void tree_print(struct tree_node *node, int depth) {
 	}
 }
 
-bool list_dir(char *path)
+bool list_dir(char *path, struct tree_node *parent)
 {
 	DIR		*dir;
 	struct dirent	*entry;
 
 	if (!(dir = opendir(path)))
 		return false;
-	struct tree_node *parent = tree_create_node(path, 1);
 
 	while ((entry = readdir(dir)) != NULL) {
 
 		if (!(opt & F_HIDDEN) && entry->d_name[0] == '.')
 			continue;
 
+		char full_path[1024];
+        	snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+	
 		struct stat st;
-		if (stat(entry->d_name, &st) != 0)
+		if (stat(full_path, &st) != 0)
 			continue;
+
+		bool should_recurse = S_ISDIR(st.st_mode);
+		if ((strcmp(entry->d_name, ".") == 0) || (strcmp(entry->d_name, "..") == 0))
+			should_recurse = false;
 
 		struct tree_node *new_child = tree_create_node(entry->d_name, S_ISDIR(st.st_mode));
         	parent->children = realloc(parent->children, (parent->num_child + 1) * sizeof(struct tree_node *));
         	parent->children[parent->num_child++] = new_child;
 
+		if ((opt & F_RECURSIVE) && should_recurse) {
+			list_dir(full_path, parent);
+		}
 	}
 	closedir(dir);
-
-	tree_print(parent, 0);
 	return true;
 }
 
@@ -108,5 +115,9 @@ int main(int argc, char **argv)
 	if (!parse_flags(argc, argv))
 		return EXIT_FAILURE;
 
-	return list_dir(path);
+	struct tree_node *root = tree_create_node(path, 1);
+	bool ret = list_dir(path, root);
+
+	tree_print(root, 0);
+	return ret;
 }
