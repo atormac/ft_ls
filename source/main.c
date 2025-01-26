@@ -1,20 +1,7 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "../include/ft_ls.h"
 #include <dirent.h>
 #include <sys/stat.h>
 
-enum {
-	F_HIDDEN = 1 << 1,
-	F_LONG = 1 << 2,
-	F_RECURSIVE = 1 << 3,
-	F_SORTED = 1 << 4,
-	F_REVERSE = 1 << 5,
-};
-
-char*	path = ".";
-int	opt = 0;
 
 struct tree_node
 {
@@ -119,5 +106,5 @@ int main(int argc, char **argv)
 	bool ret = list_dir(path, root);
 
 	tree_print(root, 0);
-	return ret;
+	return !ret;
 }
