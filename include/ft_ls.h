@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 
-char*	path = ".";
-int	opt = 0;
 
 enum {
 	F_HIDDEN = 1 << 1,
