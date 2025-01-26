@@ -1,7 +1,7 @@
 #include "../include/ft_ls.h"
 #include "../include/tree.h"
 
-char*	path = ".";
+char*	g_path = ".";
 int	opt = 0;
 
 bool list_dir(char *path, struct tree_node *parent)
@@ -57,8 +57,8 @@ bool parse_flags(int argc, char **argv)
 		}
 	}
 	if (i < argc)
-		path = argv[i];
-	printf("PATH: %s\n", path);
+		g_path = argv[i];
+	printf("PATH: %s\n", g_path);
 	if (opt & F_HIDDEN) printf("[opt]: F_HIDDEN\n");
 	if (opt & F_RECURSIVE) printf("[opt]: F_RECURSIVE\n");
 	if (opt & F_SORTED) printf("[opt]: F_SORTED\n");
@@ -73,8 +73,8 @@ int main(int argc, char **argv)
 	if (!parse_flags(argc, argv))
 		return EXIT_FAILURE;
 
-	struct tree_node *root = tree_create_node(path, 1);
-	bool ret = list_dir(path, root);
+	struct tree_node *root = tree_create_node(g_path, 1);
+	bool ret = list_dir(g_path, root);
 
 	tree_print(root, 0);
 	return !ret;
