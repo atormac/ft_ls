@@ -1,3 +1,4 @@
+MAKEFLAGS += "-s"
 NAME = ft_ls
 CC = cc
 CFLAGS := -Wall -Wextra -Werror
@@ -23,6 +24,7 @@ $(NAME): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SOURCE_DIR)/%.c
+	@echo [+] $<
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 clean:

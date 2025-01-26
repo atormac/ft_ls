@@ -1,16 +1,28 @@
 #include "../include/ft_ls.h"
 #include "../include/tree.h"
+#include <errno.h>
 
 char*	g_path = ".";
 int	opt = 0;
+
+void error_dir(char *dir)
+{
+	char buf[1024];
+
+	snprintf(buf, sizeof(buf), "Error: cannot open directory: '%s': %s\n",
+			dir, strerror(errno));
+	write(STDERR_FILENO, buf, strlen(buf));
+}
 
 bool list_dir(char *path, struct tree_node *parent)
 {
 	DIR		*dir;
 	struct dirent	*entry;
 
-	if (!(dir = opendir(path)))
+	if (!(dir = opendir(path))) {
+		error_dir(path);
 		return false;
+	}
 
 	while ((entry = readdir(dir)) != NULL) {
 
@@ -40,7 +52,7 @@ bool list_dir(char *path, struct tree_node *parent)
 	return true;
 }
 
-bool parse_flags(int argc, char **argv)
+bool parse_args(int argc, char **argv)
 {
 	int i;
 	for (i = 1; i < argc && argv[i][0] == '-'; i++) {
@@ -70,7 +82,7 @@ bool parse_flags(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	if (!parse_flags(argc, argv))
+	if (!parse_args(argc, argv))
 		return EXIT_FAILURE;
 
 	struct tree_node *root = tree_create_node(g_path, 1);
