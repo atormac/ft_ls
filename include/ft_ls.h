@@ -19,4 +19,6 @@ enum {
 	F_REVERSE = 1 << 5,
 };
 
+extern int opt;
+
 #endif
