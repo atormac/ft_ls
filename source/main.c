@@ -16,6 +16,36 @@ enum {
 char*	path = ".";
 int	opt = 0;
 
+struct tree_node
+{
+	char *name;
+	bool is_directory;
+	int num_child;
+	struct tree_node **children;
+};
+
+struct tree_node *tree_create_node(const char *filename, bool is_dir)
+{
+	struct tree_node *node = (struct tree_node *)malloc(sizeof(struct tree_node));
+	node->name = filename ? strdup(filename) : NULL;
+	node->is_directory = is_dir;
+	node->children = NULL;
+	node->num_child = 0;
+	return node;
+}
+
+void tree_print(struct tree_node *node, int depth) {
+
+	for (int i = 1; i < depth; i++) {
+		printf("  ");
+	}
+	if (depth > 0)
+		printf("%s\n", node->name);
+	for (int i = 0; i < node->num_child; i++) {
+		tree_print(node->children[i], depth + 1);
+	}
+}
+
 bool list_dir(char *path)
 {
 	DIR		*dir;
@@ -23,16 +53,25 @@ bool list_dir(char *path)
 
 	if (!(dir = opendir(path)))
 		return false;
+	struct tree_node *parent = tree_create_node(path, 1);
 
 	while ((entry = readdir(dir)) != NULL) {
 
 		if (!(opt & F_HIDDEN) && entry->d_name[0] == '.')
 			continue;
 
-		printf("%s\n", entry->d_name);
-	}
+		struct stat st;
+		if (stat(entry->d_name, &st) != 0)
+			continue;
 
+		struct tree_node *new_child = tree_create_node(entry->d_name, S_ISDIR(st.st_mode));
+        	parent->children = realloc(parent->children, (parent->num_child + 1) * sizeof(struct tree_node *));
+        	parent->children[parent->num_child++] = new_child;
+
+	}
 	closedir(dir);
+
+	tree_print(parent, 0);
 	return true;
 }
 
