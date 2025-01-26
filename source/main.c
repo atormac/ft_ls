@@ -7,9 +7,10 @@
 
 enum {
 	F_HIDDEN = 1 << 1,
-	F_RECURSIVE = 1 << 2,
-	F_SORTED = 1 << 3,
-	F_REVERSE = 1 << 4,
+	F_LONG = 1 << 2,
+	F_RECURSIVE = 1 << 3,
+	F_SORTED = 1 << 4,
+	F_REVERSE = 1 << 5,
 };
 
 char*	path = ".";
@@ -42,6 +43,7 @@ bool parse_flags(int argc, char **argv)
 		
 		switch(argv[i][1]) {
 			case	'a': opt |= F_HIDDEN; break;
+			case	'l': opt |= F_LONG; break;
 			case	'R': opt |= F_RECURSIVE; break;
 			case	't': opt |= F_SORTED; break;
 			case	'r': opt |= F_REVERSE; break;
