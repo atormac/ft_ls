@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	if (!parse_args(argc, argv))
 		return EXIT_FAILURE;
 
-	struct tree_node *root = tree_create_node(g_path, 0);
+	struct tree_node *root = tree_create_node(g_path, 1);
 	bool ret = list_dir(g_path, root);
 
 	tree_print(root, 0);

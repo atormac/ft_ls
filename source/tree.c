@@ -10,24 +10,35 @@ struct tree_node *tree_create_node(const char *filename, bool is_dir)
 	return node;
 }
 
-void tree_print(struct tree_node *node, int depth) {
-
-	/* for (int i = 1; i < depth; i++) {
-		printf("  ");
-	} */
-	//if (depth > 0)
-	if ((opt & F_RECURSIVE) && depth == 0) {
+void tree_print_node(struct tree_node *root)
+{
+	int i;
+	for (i = 0; i < root->num_child - 1; i++) {
+		struct tree_node *node = root->children[i];
+		printf("%s  ", node->name);
+	}
+	if (i < root->num_child) {
+		struct tree_node *node = root->children[i];
 		printf("%s\n", node->name);
 	}
-	if (depth > 0) {
-		if (opt & F_RECURSIVE && node->is_directory && node->num_child) {
-			printf("%s:\n", node->name);
-		}
-		else {
-			printf("%s\n", node->name);
-		}
+}
+
+void tree_print(struct tree_node *node, int depth) {
+
+	if (!(opt & F_RECURSIVE)) {
+		tree_print_node(node);
+		return;
+	}
+	//tree_print_recursive(node, 0);
+		
+	if (node->is_directory)
+	{
+		printf("%s:\n", node->name);
+		tree_print_node(node);
+		printf("\n");
 	}
 	for (int i = 0; i < node->num_child; i++) {
 		tree_print(node->children[i], depth + 1);
 	}
+		
 }
