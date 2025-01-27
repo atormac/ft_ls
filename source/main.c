@@ -1,5 +1,4 @@
 #include "../include/ft_ls.h"
-#include "../include/tree.h"
 #include <locale.h>
 
 int	opt = 0;
