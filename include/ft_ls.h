@@ -10,8 +10,15 @@
 #include <sys/stat.h>
 
 
+enum
+{
+	LS_OK = 0,
+	LS_MINOR = 1,
+	LS_FATAL = 2,
+};
 
-enum {
+enum
+{
 	F_HIDDEN = 1 << 1,
 	F_LONG = 1 << 2,
 	F_RECURSIVE = 1 << 3,
