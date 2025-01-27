@@ -77,6 +77,36 @@ void format_ulong(unsigned long n, int max_size)
 	print_ulong(n);
 }
 
+void put_chars(char *s)
+{
+	size_t len = strlen(s);
+	write(STDOUT_FILENO, s, len);
+}
+
+void put_line(char *s)
+{
+	put_chars(s);
+	put_chars("\n");
+}
+
+void print_str(char *s, int len)
+{
+	if (!s)
+		return;
+	write(1, s, len);
+}
+
+void format_time(time_t mtime)
+{
+	char *time_str = ctime(&mtime);
+	if (!time_str)
+		return;
+	write(1, " ", 1);
+	print_str(&time_str[4], 12);
+	write(1, " ", 1);
+}
+
+
 void print_longmode(t_head *head)
 {
 	unsigned long max_link_size = 0;
@@ -119,7 +149,7 @@ void print_longmode(t_head *head)
 		write(1, " ", 1);
 		//printf("%*lu ", (int)max_link_size, entry->links);
 
-		struct passwd *pwd = getpwuid(entry->gid);
+		struct passwd *pwd = getpwuid(entry->uid);
 		struct group *grp = getgrgid(entry->gid);
 		format_user(pwd->pw_name, max_owner_len);
 		format_user(grp->gr_name, max_group_len);
@@ -128,15 +158,8 @@ void print_longmode(t_head *head)
 
 
 		format_ulong(entry->size, max_size_len);
-		//printf("%*ld", max_size_len, (long)entry->size);
-	
-		char buffer[64];
-		struct tm *tm_info = localtime(&entry->mtime);
-		strftime(buffer, sizeof(buffer), "%b %d %H:%M", tm_info);
-		//char *time_str = ctime(&entry->mtime);
-		printf(" %s", buffer);
-		printf(" %s\n", entry->filename);
-		
+		format_time(entry->mtime);
+		put_line(entry->filename);
 	}
 }
 
