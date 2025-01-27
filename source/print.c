@@ -155,6 +155,7 @@ void format_time(time_t mtime)
 	write(1, " ", 1);
 }
 
+void format_symlink(t_entry *entry);
 
 void print_longmode(t_head *head)
 {
@@ -208,8 +209,21 @@ void print_longmode(t_head *head)
 
 		format_ulong(entry->size, max_size_len);
 		format_time(entry->mtime);
-		put_line(entry->filename);
+		put_chars(entry->filename);
+		format_symlink(entry);
+		put_chars("\n");
 	}
+}
+
+void format_symlink(t_entry *entry)
+{
+	if ((entry->mode & S_IFMT) != S_IFLNK || !entry->fullpath)
+		return;
+	char out[512] = { 0 };
+	if (readlink(entry->fullpath, out, sizeof(out)) == -1)
+		return;
+	put_chars(" -> ");
+	put_chars(out);
 }
 
 void print_permissions(mode_t mode)

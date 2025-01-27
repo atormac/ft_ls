@@ -46,6 +46,7 @@ typedef struct t_entry
 typedef struct t_head
 {
 	int	count;
+	int	alloc_count;
 	char	*base_path; //probably not needed
 	t_entry	*entries;
 }	t_head;

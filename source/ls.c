@@ -13,8 +13,6 @@ void error_dir(char *dir)
 	write(STDERR_FILENO, buf, strlen(buf));
 }
 
-
-
 int cmp_entry(const void *a, const void *b)
 {
 	struct t_entry *entry_a = (struct t_entry *)a;
@@ -34,7 +32,6 @@ int cmp_entry(const void *a, const void *b)
 		res *= -1;
 	return res;
 }
-
 
 void free_list(t_head *head)
 {
@@ -72,7 +69,11 @@ bool ls_dir(char *path)
 		if (lstat(full_path, &st) != 0)
 			continue;
 
-		head.entries = realloc(head.entries, (head.count + 1) * sizeof(t_entry));
+		if (head.alloc_count - head.count == 0) {
+			int new_size = head.count + 8;
+			head.entries = realloc(head.entries, new_size * sizeof(t_entry));
+			head.alloc_count = new_size;
+		}
 		head.entries[head.count].blocks = st.st_blocks;
 		head.entries[head.count].mtime = st.st_mtime;
 		head.entries[head.count].mode = st.st_mode;
@@ -80,10 +81,12 @@ bool ls_dir(char *path)
 		head.entries[head.count].size = st.st_size;
 		head.entries[head.count].uid = st.st_uid;
 		head.entries[head.count].gid = st.st_gid;
-
 		head.entries[head.count].filename = strdup(e->d_name);
 		head.entries[head.count].fullpath = NULL;
+
 		if (opt & F_RECURSIVE && S_ISDIR(st.st_mode))
+			head.entries[head.count].fullpath = strdup(full_path);
+		else if ((opt & F_LONG) && (head.entries[head.count].mode & S_IFMT) == S_IFLNK)
 			head.entries[head.count].fullpath = strdup(full_path);
 		head.count++;
 	}

@@ -1,7 +1,10 @@
 #include "../include/ft_ls.h"
+#include "../include/str.h"
 #include <locale.h>
 
 int	opt = 0;
+char	**dirs = NULL;
+int	dir_count = 0;
 
 static int g_exit_status = LS_OK;
 
@@ -17,11 +20,9 @@ static int cmp_dirs(const void *a, const void *b)
 	const char *dir_a = *(const char**)a;
 	const char *dir_b = *(const char**)b;
 
-	return strcmp(dir_a, dir_b);
+	return ft_strcmp(dir_a, dir_b);
 }
 
-char	**dirs = NULL;
-int	dir_count = 0;
 
 static bool add_dirs(int argc, char **argv)
 {
