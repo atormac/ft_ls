@@ -10,6 +10,25 @@ struct tree_node *tree_create_node(const char *filename, bool is_dir)
 	return node;
 }
 
+int cmp_nodes(const void *a, const void *b)
+{
+	struct tree_node *node_a = *(struct tree_node **)a;
+	struct tree_node *node_b = *(struct tree_node **)b;
+	return strcmp(node_a->name, node_b->name);
+}
+
+void tree_sort(struct tree_node *node)
+{
+	if (!node->num_child)
+		return;
+	qsort(node->children, node->num_child, sizeof(struct tree_node *), cmp_nodes);
+	for (int i = 0; i < node->num_child; i++) {
+
+		if (node->children[i]->is_directory)
+			tree_sort(node->children[i]);
+	}
+}
+
 void tree_print_node(struct tree_node *root)
 {
 	int i;
@@ -33,6 +52,7 @@ void tree_print(struct tree_node *node, int depth) {
 		
 	if (node->is_directory)
 	{
+		printf("level: %d\n", depth);
 		printf("%s:\n", node->name);
 		tree_print_node(node);
 		printf("\n");
