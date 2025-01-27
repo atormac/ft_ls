@@ -34,7 +34,7 @@ void format_file(char *s, int max_size)
 	write(1, s, len);
 	do {
 		write(1, " ", 1);
-	} while (pad--);
+	} while (pad-- > 0);
 }
 
 void print_default(t_head *head)
@@ -47,9 +47,17 @@ void print_default(t_head *head)
 	}
 	if (!max_len)
 		return;
-	int cols = 80 / (max_len + 2);
+	int col_width = max_len + 2;
+	int cols =  100 / col_width;
 	if (cols == 0) cols = 1;
 
+	for (int i = 0; i < head->count; i++) {
+		format_file(head->entries[i].filename, max_len);
+		if ((i + 1) % cols == 0 || i == cols - 1 || i == head->count - 1) {
+			put_chars("\n");
+		}
+	}
+	/*
 	int rows = (head->count + cols - 1) / cols;
 	for (int row = 0; row < rows; row++) {
 		for (int col = 0; col < cols; col++) {
@@ -64,6 +72,7 @@ void print_default(t_head *head)
 		}
 		put_chars("\n");
 	}
+	*/
 	/*
 	int i;
 	for (i = 0; i < head->count - 1; i++) {
@@ -85,7 +94,7 @@ int len_digits(long num)
 		len++;
 		num /= 10;
 	}
-	return len;	
+	return len;
 }
 
 void format_user(char *s, int max_size)
@@ -96,7 +105,7 @@ void format_user(char *s, int max_size)
 	write(1, s, len);
 	do {
 		write(1, " ", 1);
-	} while (pad--);
+	} while (pad-- > 0);
 }
 
 void print_ulong(unsigned long n)
@@ -149,8 +158,8 @@ void format_time(time_t mtime)
 
 void print_longmode(t_head *head)
 {
-	unsigned long max_link_size = 0;
-	long max_size = 0;
+	unsigned long max_link_len = 0;
+	long max_size_len = 0;
 	int max_owner_len = 0;
 	int max_group_len = 0;
 	long total_blocks = 0;
@@ -159,11 +168,12 @@ void print_longmode(t_head *head)
 		t_entry *entry = &head->entries[i];
 
 		total_blocks += entry->blocks;
-		if (entry->links > max_link_size)
-			max_link_size = entry->links;
-		if (entry->size > max_size)
-			max_size = entry->size;
-		struct passwd *pwd = getpwuid(entry->gid);
+		if (entry->links > max_link_len)
+			max_link_len = entry->links;
+		if (entry->size > max_size_len)
+			max_size_len = entry->size;
+
+		struct passwd *pwd = getpwuid(entry->uid);
 		struct group *grp = getgrgid(entry->gid);
 		char *owner = pwd ? pwd->pw_name : "unknown";
 		char *group = grp ? grp->gr_name : "unknown";
@@ -174,28 +184,27 @@ void print_longmode(t_head *head)
 		if (group_len > max_group_len)
 			max_group_len = group_len;
 	}
-	max_link_size = len_digits(max_link_size);
-	int max_size_len = len_digits(max_size);
+	max_link_len = len_digits(max_link_len);
+	max_size_len = len_digits(max_size_len);
 
-	printf("total: %ld\n", total_blocks / 2);
+	put_chars("total: ");
+	print_ulong(total_blocks / 2);
+	put_chars("\n");
 
 	for (int i = 0; i < head->count; i++) {
 		t_entry *entry = &head->entries[i];
-	
-		print_permissions(entry->mode);
-		//printf("%lu ", entry->links);
 
-		format_ulong(entry->links, max_link_size);
-		write(1, " ", 1);
-		//printf("%*lu ", (int)max_link_size, entry->links);
+		print_permissions(entry->mode);
+
+		format_ulong(entry->links, max_link_len);
+		put_chars(" ");
 
 		struct passwd *pwd = getpwuid(entry->uid);
 		struct group *grp = getgrgid(entry->gid);
-		format_user(pwd->pw_name, max_owner_len);
-		format_user(grp->gr_name, max_group_len);
-		//printf("%-*s ", max_owner_len, pwd ? pwd->pw_name : "unknown");
-		//printf("%-*s ", max_group_len, grp ? grp->gr_name : "unknown");
-
+		char *owner = pwd ? pwd->pw_name : "unknown";
+		char *group = grp ? grp->gr_name : "unknown";
+		format_user(owner, max_owner_len);
+		format_user(group, max_group_len);
 
 		format_ulong(entry->size, max_size_len);
 		format_time(entry->mtime);
