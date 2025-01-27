@@ -31,6 +31,12 @@ extern int opt;
 typedef struct t_entry
 {
 	time_t	mtime;
+	mode_t	mode;
+	nlink_t links;
+	off_t	size;
+    	uid_t	uid; //owner id
+    	gid_t	gid; //group id
+
 	bool	is_dir;	
 	char	*filename;
 	char	*fullpath;

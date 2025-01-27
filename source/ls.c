@@ -74,6 +74,12 @@ bool ls_dir(char *path)
 
 		head.entries = realloc(head.entries, (head.count + 1) * sizeof(t_entry));
 		head.entries[head.count].mtime = st.st_mtime;
+		head.entries[head.count].mode = st.st_mode;
+		head.entries[head.count].links = st.st_nlink;
+		head.entries[head.count].size = st.st_size;
+		head.entries[head.count].uid = st.st_uid;
+		head.entries[head.count].gid = st.st_gid;
+
 		head.entries[head.count].is_dir = S_ISDIR(st.st_mode);
 		head.entries[head.count].filename = strdup(e->d_name);
 		head.entries[head.count].fullpath = NULL;
