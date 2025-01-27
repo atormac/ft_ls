@@ -47,14 +47,34 @@ int len_digits(long num)
 	}
 	return len;	
 }
-void left_pad(int max_size, int len)
+
+void format_user(char *s, int max_size)
 {
-	//int len = strlen(s);
-	int pad_size = len - max_size;
-	while (pad_size--) {
+	int len = strlen(s);
+	int pad = max_size - len;
+
+	write(1, s, len);
+	do {
 		write(1, " ", 1);
+	} while (pad--);
+}
+
+void print_ulong(unsigned long n)
+{
+	if (n >= 10)
+		print_ulong(n / 10);
+	char ch = '0' + (n % 10);
+	write(1, &ch, 1);
+}
+
+void format_ulong(unsigned long n, int max_size)
+{
+	int pad = max_size - len_digits(n);
+	while (pad > 0) {
+		write(1, " ", 1);
+		pad--;
 	}
-	//write(1, s, len);
+	print_ulong(n);
 }
 
 void print_longmode(t_head *head)
@@ -94,20 +114,21 @@ void print_longmode(t_head *head)
 	
 		print_permissions(entry->mode);
 		//printf("%lu ", entry->links);
-		printf("%*lu ", (int)max_link_size, entry->links);
+
+		format_ulong(entry->links, max_link_size);
+		write(1, " ", 1);
+		//printf("%*lu ", (int)max_link_size, entry->links);
 
 		struct passwd *pwd = getpwuid(entry->gid);
 		struct group *grp = getgrgid(entry->gid);
-		/*
-		printf(" %s", pwd ? pwd->pw_name : "unknown");
-		printf(" %s", grp ? grp->gr_name : "unknown");
-		*/
-		printf("%-*s ", max_owner_len, pwd ? pwd->pw_name : "unknown");
-		printf("%-*s ", max_group_len, grp ? grp->gr_name : "unknown");
+		format_user(pwd->pw_name, max_owner_len);
+		format_user(grp->gr_name, max_group_len);
+		//printf("%-*s ", max_owner_len, pwd ? pwd->pw_name : "unknown");
+		//printf("%-*s ", max_group_len, grp ? grp->gr_name : "unknown");
 
 
-		//printf("%ld", entry->size);
-		printf("%*ld ", max_size_len, (long)entry->size);
+		format_ulong(entry->size, max_size_len);
+		//printf("%*ld", max_size_len, (long)entry->size);
 	
 		char buffer[64];
 		struct tm *tm_info = localtime(&entry->mtime);
