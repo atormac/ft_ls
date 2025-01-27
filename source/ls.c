@@ -2,6 +2,7 @@
 #include <errno.h>
 
 void set_exit_status(int status);
+void print_dir(t_head *head);
 
 void error_dir(char *dir)
 {
@@ -12,20 +13,6 @@ void error_dir(char *dir)
 	write(STDERR_FILENO, buf, strlen(buf));
 }
 
-typedef struct t_entry
-{
-	time_t	mtime;
-	bool	is_dir;	
-	char	*filename;
-	char	*fullpath;
-}	t_entry;
-
-typedef struct t_head
-{
-	int	count;
-	char	*base_path;
-	t_entry	*entries;
-}	t_head;
 
 
 int cmp_entry(const void *a, const void *b)
@@ -48,25 +35,6 @@ int cmp_entry(const void *a, const void *b)
 	return res;
 }
 
-void print_dir_entries(t_head *head)
-{
-	static bool has_printed;
-	int i;
-
-	if ((opt & F_RECURSIVE)) {
-		if (has_printed)
-			printf("\n");
-		printf("%s:\n", head->base_path);
-		has_printed = true;
-	}
-
-	for (i = 0; i < head->count - 1; i++) {
-		printf("%s  ", head->entries[i].filename);
-	}
-	if (i < head->count) {
-		printf("%s\n", head->entries[i].filename);
-	}
-}
 
 void free_list(t_head *head)
 {
@@ -116,7 +84,7 @@ bool ls_dir(char *path)
 	closedir(dir);
 
 	qsort(head.entries, head.count, sizeof(t_entry), cmp_entry);
-	print_dir_entries(&head);
+	print_dir(&head);
 
 	if (!(opt & F_RECURSIVE)) {
 		free_list(&head);
