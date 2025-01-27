@@ -73,6 +73,7 @@ bool ls_dir(char *path)
 			continue;
 
 		head.entries = realloc(head.entries, (head.count + 1) * sizeof(t_entry));
+		head.entries[head.count].blocks = st.st_blocks;
 		head.entries[head.count].mtime = st.st_mtime;
 		head.entries[head.count].mode = st.st_mode;
 		head.entries[head.count].links = st.st_nlink;

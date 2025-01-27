@@ -30,6 +30,7 @@ extern int opt;
 
 typedef struct t_entry
 {
+	long	blocks;
 	time_t	mtime;
 	mode_t	mode;
 	nlink_t links;
