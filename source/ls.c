@@ -69,7 +69,7 @@ bool ls_dir(char *path)
 		char full_path[1024];
 		struct stat st;
         	snprintf(full_path, sizeof(full_path), "%s/%s", path, e->d_name);
-		if (stat(full_path, &st) != 0)
+		if (lstat(full_path, &st) != 0)
 			continue;
 
 		head.entries = realloc(head.entries, (head.count + 1) * sizeof(t_entry));
@@ -81,7 +81,6 @@ bool ls_dir(char *path)
 		head.entries[head.count].uid = st.st_uid;
 		head.entries[head.count].gid = st.st_gid;
 
-		head.entries[head.count].is_dir = S_ISDIR(st.st_mode);
 		head.entries[head.count].filename = strdup(e->d_name);
 		head.entries[head.count].fullpath = NULL;
 		if (opt & F_RECURSIVE && S_ISDIR(st.st_mode))
@@ -99,7 +98,7 @@ bool ls_dir(char *path)
 	}
 	for (int i = 0; i < head.count; i++) {
 
-		if (!head.entries[i].is_dir)
+		if (!S_ISDIR(head.entries[i].mode))
 			continue;
 		if ((strcmp(head.entries[i].filename, ".") == 0) || (strcmp(head.entries[i].filename, "..") == 0))
 			continue;

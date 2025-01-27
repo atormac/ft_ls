@@ -38,7 +38,6 @@ typedef struct t_entry
     	uid_t	uid; //owner id
     	gid_t	gid; //group id
 
-	bool	is_dir;	
 	char	*filename;
 	char	*fullpath;
 }	t_entry;

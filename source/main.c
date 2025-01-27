@@ -49,8 +49,8 @@ int main(int argc, char **argv)
 
 	if (!parse_args(argc, argv, &path))
 		return EXIT_FAILURE;
-	setvbuf(stdout, NULL, _IONBF, 0);
 	setlocale(LC_ALL, ""); //debug
+	setvbuf(stdout, NULL, _IONBF, 0);
 
 	ls_dir(path);
 	return g_exit_status;

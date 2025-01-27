@@ -6,6 +6,7 @@
 
 void print_default(t_head *head);
 void print_longmode(t_head *head);
+void put_chars(char *s);
 
 void print_dir(t_head *head)
 {
@@ -24,8 +25,46 @@ void print_dir(t_head *head)
 
 }
 
+void format_file(char *s, int max_size)
+{
+	int len = strlen(s);
+	int pad = max_size - len;
+
+
+	write(1, s, len);
+	do {
+		write(1, " ", 1);
+	} while (pad--);
+}
+
 void print_default(t_head *head)
 {
+	int max_len = 0;
+
+	for (int i = 0; i < head->count; i++) {
+		int len = strlen(head->entries[i].filename);
+		if (len > max_len) max_len = len;
+	}
+	if (!max_len)
+		return;
+	int cols = 80 / (max_len + 2);
+	if (cols == 0) cols = 1;
+
+	int rows = (head->count + cols - 1) / cols;
+	for (int row = 0; row < rows; row++) {
+		for (int col = 0; col < cols; col++) {
+			int index = row + col * rows;
+			if (index >= head->count)
+				break;
+			if (col == cols - 1) {
+				put_chars(head->entries[index].filename);
+				break;
+			}
+			format_file(head->entries[index].filename, max_len);
+		}
+		put_chars("\n");
+	}
+	/*
 	int i;
 	for (i = 0; i < head->count - 1; i++) {
 		printf("%s  ", head->entries[i].filename);
@@ -33,6 +72,7 @@ void print_default(t_head *head)
 	if (i < head->count) {
 		printf("%s\n", head->entries[i].filename);
 	}
+	*/
 }
 
 void print_permissions(mode_t mode);
