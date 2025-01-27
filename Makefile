@@ -44,6 +44,7 @@ debug:
 	@make fclean
 	@make debug_flags -j$(NPROCS)
 asan:
+	@echo [ASAN]
 	@make fclean
 	@make asan_flags -j$(NPROCS)
 

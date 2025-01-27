@@ -12,7 +12,7 @@ void print_dir(t_head *head)
 {
 	static bool has_printed;
 
-	if ((opt & F_RECURSIVE)) {
+	if ((opt & F_RECURSIVE) || (dir_count >= 2)) {
 		if (has_printed)
 			printf("\n");
 		printf("%s:\n", head->base_path);

@@ -89,7 +89,8 @@ bool ls_dir(char *path)
 	}
 	closedir(dir);
 
-	qsort(head.entries, head.count, sizeof(t_entry), cmp_entry);
+	if (head.entries)
+		qsort(head.entries, head.count, sizeof(t_entry), cmp_entry);
 	print_dir(&head);
 
 	if (!(opt & F_RECURSIVE)) {

@@ -27,6 +27,7 @@ enum
 };
 
 extern int opt;
+extern int dir_count;
 
 typedef struct t_entry
 {
