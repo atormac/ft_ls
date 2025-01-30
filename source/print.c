@@ -57,31 +57,6 @@ void print_default(t_head *head)
 			put_chars("\n");
 		}
 	}
-	/*
-	int rows = (head->count + cols - 1) / cols;
-	for (int row = 0; row < rows; row++) {
-		for (int col = 0; col < cols; col++) {
-			int index = row + col * rows;
-			if (index >= head->count)
-				break;
-			if (col == cols - 1) {
-				put_chars(head->entries[index].filename);
-				break;
-			}
-			format_file(head->entries[index].filename, max_len);
-		}
-		put_chars("\n");
-	}
-	*/
-	/*
-	int i;
-	for (i = 0; i < head->count - 1; i++) {
-		printf("%s  ", head->entries[i].filename);
-	}
-	if (i < head->count) {
-		printf("%s\n", head->entries[i].filename);
-	}
-	*/
 }
 
 void print_permissions(mode_t mode);
@@ -157,6 +132,7 @@ void format_time(time_t mtime)
 
 void format_symlink(t_entry *entry);
 
+#define MAX_SET(a, b) if (a > b) a = b
 void print_longmode(t_head *head)
 {
 	unsigned long max_link_len = 0;
@@ -180,10 +156,8 @@ void print_longmode(t_head *head)
 		char *group = grp ? grp->gr_name : "unknown";
 		int owner_len = strlen(owner);
 		int group_len = strlen(group);
-		if (owner_len > max_owner_len)
-			max_owner_len = owner_len;
-		if (group_len > max_group_len)
-			max_group_len = group_len;
+		MAX_SET(owner_len, max_owner_len);
+		MAX_SET(group_len, max_group_len);
 	}
 	max_link_len = len_digits(max_link_len);
 	max_size_len = len_digits(max_size_len);

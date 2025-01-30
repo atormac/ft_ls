@@ -34,11 +34,11 @@ static bool add_dirs(int argc, char **argv)
 
 		if (argv[i][0] == '-' && argv[i][1])
 			continue;
-		dirs[dir_count] = strdup(argv[i]);
+		dirs[dir_count] = ft_strdup(argv[i]);
 		dir_count++;
 	}
 	if (!dir_count) {
-		dirs[0] = strdup(".");
+		dirs[0] = ft_strdup(".");
 		dir_count = 1;
 	}
 	qsort(dirs, dir_count, sizeof(char *), cmp_dirs);
@@ -51,6 +51,7 @@ static bool add_dirs(int argc, char **argv)
 static bool parse_args(int argc, char **argv)
 {
 	int i;
+
 	for (i = 1; i < argc; i++) {
 		for (int j = 1; argv[i][0] == '-' && argv[i][j]; j++) {
 			switch(argv[i][j]) {
