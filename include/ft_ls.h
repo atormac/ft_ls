@@ -9,7 +9,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-
 enum
 {
 	LS_OK = 0,

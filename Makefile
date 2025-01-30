@@ -4,7 +4,7 @@ CC = cc
 CFLAGS := -Wall -Wextra -Werror
 
 SOURCE_DIR := source
-SOURCES := main.c ls.c print.c str.c
+SOURCES := main.c ls.c stack.c print.c str.c
 INCLUDE_DIR = include
 
 OBJ_DIR := obj
@@ -18,9 +18,11 @@ NPROCS := 4
 target asan_flags: CFLAGS += -fsanitize=address,undefined -g
 target debug_flags: CFLAGS += -gdwarf-4 -fstandalone-debug
 
+
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
+	@echo $(CFLAGS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SOURCE_DIR)/%.c

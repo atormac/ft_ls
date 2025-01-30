@@ -8,7 +8,7 @@ int	dir_count = 0;
 
 static int g_exit_status = LS_OK;
 
-bool ls_dir(char *path);
+//bool ls_dir(char *path);
 
 void set_exit_status(int status)
 {
@@ -77,6 +77,7 @@ static bool parse_args(int argc, char **argv)
 
 	return true;
 }
+void ls_exec(char *path);
 
 int main(int argc, char **argv)
 {
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 
 	for (int i = 0; i < dir_count; i++) {
-		ls_dir(dirs[i]);
+		ls_exec(dirs[i]);
 		free(dirs[i]);
 	}
 	free(dirs);

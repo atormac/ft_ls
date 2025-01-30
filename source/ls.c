@@ -1,4 +1,5 @@
 #include "../include/ft_ls.h"
+#include "../include/stack.h"
 #include <errno.h>
 
 void set_exit_status(int status);
@@ -69,7 +70,7 @@ bool ls_add_entry(t_head *head, struct dirent *e, char *path)
 	return true;
 }
 
-bool ls_dir(char *path)
+bool ls_dir(char *path, t_node **stack)
 {
 	DIR		*dir;
 	struct dirent	*e;
@@ -105,11 +106,24 @@ bool ls_dir(char *path)
 		if ((strcmp(head.entries[i].filename, ".") == 0) || (strcmp(head.entries[i].filename, "..") == 0))
 			continue;
 
-		ls_dir(head.entries[i].fullpath);
+		stack_push(stack, head.entries[i].fullpath);
+		//ls_dir(head.entries[i].fullpath);
 	}
 
 	free_list(&head);
 	return true;
+}
+
+void ls_exec(char *path)
+{
+	t_node *stack = NULL;
+
+	stack_push(&stack, path); 
+	while (stack != NULL) {
+		char *current = stack_pop(&stack);
+		ls_dir(current, &stack);
+		free(current);
+	}
 }
 
 void free_list(t_head *head)
