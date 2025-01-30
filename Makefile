@@ -17,6 +17,7 @@ NPROCS := 4
 
 target asan_flags: CFLAGS += -fsanitize=address,undefined -g
 target debug_flags: CFLAGS += -gdwarf-4 -fstandalone-debug
+target bench_flags: CFLAGS += -O3 -DBENCH
 
 
 all: $(NAME)
@@ -39,8 +40,14 @@ re:
 	@make fclean
 	@make all -j$(NPROCS)
 
+bench_flags: all
+
 asan_flags: all
 debug_flags: all
+
+bench:
+	@make fclean
+	@make bench_flags -j$(NPROCS)
 
 debug:
 	@make fclean
@@ -50,4 +57,4 @@ asan:
 	@make fclean
 	@make asan_flags -j$(NPROCS)
 
-.PHONY: all re clean fclean asan debug asan_flags debug_flags
+.PHONY: all re clean fclean bench bench_flags asan debug asan_flags debug_flags

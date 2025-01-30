@@ -89,7 +89,8 @@ bool ls_dir(char *path, t_node **stack)
 			continue;
 		ls_add_entry(&head, e, path);
 	}
-	closedir(dir);
+	if (closedir(dir) == -1)
+		set_exit_status(LS_MINOR);
 
 	if (head.entries)
 		qsort(head.entries, head.count, sizeof(t_entry), cmp_entry);
@@ -114,16 +115,25 @@ bool ls_dir(char *path, t_node **stack)
 	return true;
 }
 
+#include <time.h>
 void ls_exec(char *path)
 {
 	t_node *stack = NULL;
-
 	stack_push(&stack, path); 
+
+#ifdef BENCH
+	clock_t begin = clock();
+#endif
 	while (stack != NULL) {
 		char *current = stack_pop(&stack);
 		ls_dir(current, &stack);
 		free(current);
 	}
+#ifdef BENCH
+	clock_t end = clock();
+	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("took: %fs\n", time_spent);
+#endif
 }
 
 void free_list(t_head *head)
