@@ -4,7 +4,7 @@ CC = cc
 CFLAGS := -Wall -Wextra -Werror
 
 SOURCE_DIR := source
-SOURCES := main.c ls.c stack.c print.c str.c
+SOURCES := main.c ls.c stack.c print.c str.c qsort.c
 INCLUDE_DIR = include
 
 OBJ_DIR := obj

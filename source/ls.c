@@ -70,6 +70,7 @@ bool ls_add_entry(t_head *head, struct dirent *e, char *path)
 	return true;
 }
 
+void qsort_generic(void *v, int nmeb, int size, int (*cmp)(const void *, const void *));
 bool ls_dir(char *path, t_node **stack)
 {
 	DIR		*dir;
@@ -93,7 +94,7 @@ bool ls_dir(char *path, t_node **stack)
 		set_exit_status(LS_MINOR);
 
 	if (head.entries)
-		qsort(head.entries, head.count, sizeof(t_entry), cmp_entry);
+		qsort_generic(head.entries, head.count, sizeof(t_entry), cmp_entry);
 	print_dir(&head);
 
 	if (!(opt & F_RECURSIVE)) {
