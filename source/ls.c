@@ -1,5 +1,7 @@
 #include "../include/ft_ls.h"
+#include "../include/str.h"
 #include "../include/stack.h"
+#include "../include/qsort.h"
 #include <errno.h>
 
 void set_exit_status(int status);
@@ -63,14 +65,14 @@ bool ls_add_entry(t_head *head, struct dirent *e, char *path)
 	entry->fullpath = NULL;
 
 	if (opt & F_RECURSIVE && S_ISDIR(st.st_mode))
-		entry->fullpath = strdup(full_path);
+		entry->fullpath = ft_strdup(full_path);
 	else if ((opt & F_LONG) && (entry->mode & S_IFMT) == S_IFLNK)
-		entry->fullpath = strdup(full_path);
+		entry->fullpath = ft_strdup(full_path);
 	head->count++;
 	return true;
 }
 
-void qsort_generic(void *v, int nmeb, int size, int (*cmp)(const void *, const void *));
+
 bool ls_dir(char *path, t_node **stack)
 {
 	DIR		*dir;
@@ -105,11 +107,10 @@ bool ls_dir(char *path, t_node **stack)
 
 		if (!S_ISDIR(head.entries[i].mode))
 			continue;
-		if ((strcmp(head.entries[i].filename, ".") == 0) || (strcmp(head.entries[i].filename, "..") == 0))
+		if ((ft_strcmp(head.entries[i].filename, ".") == 0) || (ft_strcmp(head.entries[i].filename, "..") == 0))
 			continue;
 
 		stack_push(stack, head.entries[i].fullpath);
-		//ls_dir(head.entries[i].fullpath);
 	}
 
 	free_list(&head);

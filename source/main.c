@@ -8,7 +8,7 @@ int	dir_count = 0;
 
 static int g_exit_status = LS_OK;
 
-//bool ls_dir(char *path);
+void ls_exec(char *path);
 
 void set_exit_status(int status)
 {
@@ -77,7 +77,6 @@ static bool parse_args(int argc, char **argv)
 
 	return true;
 }
-void ls_exec(char *path);
 
 int main(int argc, char **argv)
 {
