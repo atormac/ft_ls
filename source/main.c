@@ -1,5 +1,6 @@
 #include "../include/ft_ls.h"
 #include "../include/str.h"
+#include "../include/qsort.h"
 #include <locale.h>
 
 int	opt = 0;
@@ -41,7 +42,7 @@ static bool add_dirs(int argc, char **argv)
 		dirs[0] = ft_strdup(".");
 		dir_count = 1;
 	}
-	qsort(dirs, dir_count, sizeof(char *), cmp_dirs);
+	qsort_generic(dirs, dir_count, sizeof(char *), cmp_dirs);
 	for (int k = 0; k < dir_count; k++) {
 		printf("%d: %s\n", k, dirs[k]);
 	}
